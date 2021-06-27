@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace PomodoroTimer
 {
@@ -9,8 +8,7 @@ namespace PomodoroTimer
         {
             // Values below in milliseconds
             // 25 minutes
-            //const int INTERVAL_TIME = 1500000;
-            const int INTERVAL_TIME = 5000;
+            const int INTERVAL_TIME = 1500000;
             // 5 minutes
             const int SHORT_BREAK_TIME = 300000;
             // 30 minutes
@@ -18,18 +16,44 @@ namespace PomodoroTimer
             const int NUMBER_OF_INTERVALS = 4;
 
             int currentPhase = 1;
+            bool keepGoing = true;
+            string keepGoingInput = "";
 
             Console.Write("Enter the name of your task: ");
             string taskName = Console.ReadLine();
-            // TODO: Input validation
 
-            while(currentPhase <= NUMBER_OF_INTERVALS)
+            while(keepGoing)
             {
-                pomodoroInterval(INTERVAL_TIME, taskName, currentPhase, NUMBER_OF_INTERVALS);
-                // Play sound
-                // Start break
-                currentPhase++;
+                while (currentPhase <= NUMBER_OF_INTERVALS)
+                {
+                    pomodoroInterval(INTERVAL_TIME, taskName, currentPhase, NUMBER_OF_INTERVALS);
+                    // Start break
+                    if(currentPhase < 4)
+                    {
+                        // Skip short break at the end
+                        pomodoroInterval(SHORT_BREAK_TIME, "SHORT BREAK", currentPhase, NUMBER_OF_INTERVALS);
+                    }
+                    currentPhase++;
+                }
+                // Use NUMBER_OF_INTERVALS instead of currentPhase for phase number since it will exceed # of phases to break out of loop above
+                pomodoroInterval(LONG_BREAK_TIME, "LONG BREAK", NUMBER_OF_INTERVALS, NUMBER_OF_INTERVALS);
+
+                Console.Clear();
+                Console.WriteLine("Congratulations! You finished a pomodoro sprint. Would you like to keep going?");
+                Console.Write("Please enter Y for yes, or anything else for no: ");
+                keepGoingInput = Console.ReadLine();
+                if(keepGoingInput == "Y" || keepGoingInput == "y") {
+                    keepGoing = true;
+                    currentPhase = 1;
+                }
+                else
+                {
+                    keepGoing = false;
+                }
             }
+
+            Environment.Exit(0);
+
 
             void pomodoroInterval(int duration, string taskName, int phaseNumber, int totalPhaseCount)
             {
@@ -44,6 +68,7 @@ namespace PomodoroTimer
                     // Reduce duration by 1 second
                     duration -= 1000;
                 }
+                Console.Beep();
             }
 
             string milliToMinuteSecond(int milliseconds)
