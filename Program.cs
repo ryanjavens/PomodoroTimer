@@ -42,7 +42,7 @@ namespace PomodoroTimer
                     Console.Write(milliToMinuteSecond(duration));
                     System.Threading.Thread.Sleep(1000);
                     // Reduce duration by 1 second
-                    duration = duration - 1000;
+                    duration -= 1000;
                 }
             }
 
